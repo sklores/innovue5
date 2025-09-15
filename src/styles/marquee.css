@@ -1,0 +1,26 @@
+.live-feed-panel {
+  padding: 1rem;
+}
+
+.live-feed-panel .tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.live-feed-panel .tabs button.active {
+  font-weight: bold;
+}
+
+.live-feed-panel .chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.live-feed-panel .chip {
+  padding: 0.25rem 0.5rem;
+  background: #1a1a1a;
+  border-radius: 1rem;
+  white-space: nowrap;
+}
