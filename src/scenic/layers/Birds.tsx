@@ -1,60 +1,42 @@
-import type { CSSProperties } from 'react'
+import React from "react";
 
-type BirdsProps = {
-  count: number
-  speed: number
-}
+type Props = { count: number; speed: number }; // speed 0..1
+const prefersReduced = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-const Birds = ({ count, speed }: BirdsProps) => {
-  const birds = Array.from({ length: count })
+export default function Birds({ count, speed }: Props) {
+  const reduced = prefersReduced();
+  const n = Math.max(0, Math.min(100, Math.floor(count)));
+  const s = Math.max(0, Math.min(1, speed));
+
+  const items = Array.from({ length: n }, (_, i) => {
+    const y = 5 + ((i * 29) % 60);
+    const dur = 20 - 12 * s;       // 20s..8s
+    const delay = (i * 0.7) % dur;
+
+    return (
+      <g key={i}
+         style={{ animation: reduced ? "none" : `fly ${dur}s linear ${delay}s infinite` }}
+         transform={`translate(-20, ${y})`}>
+        <path d="M0 0 C 4 -3, 8 -3, 12 0 M12 0 C 16 -3, 20 -3, 24 0"
+              fill="none" stroke="currentColor" strokeWidth="1"/>
+      </g>
+    );
+  });
+
   return (
-    <svg
-      className="birds-layer"
-      width="100%"
-      height="100%"
-      viewBox="0 0 100 20"
-      aria-hidden="true"
-    >
+    <svg aria-hidden viewBox="0 0 100 70"
+         style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
       <defs>
-        <path
-          id="bird"
-          d="M2 2L5 0L8 2"
-          stroke="currentColor"
-          strokeWidth="0.5"
-          fill="none"
-          strokeLinecap="round"
-        />
-      </defs>
-      {birds.map((_, i) => (
-        <g
-          key={i}
-          className="bird"
-          style={{
-            animationDuration: `${speed}s`,
-            animationDelay: `${(i * speed) / count}s`,
-          } as CSSProperties}
-        >
-          <use href="#bird" transform={`translate(0 ${i * 3})`} />
-        </g>
-      ))}
-      <style>{`
-        .birds-layer .bird {
-          animation-name: bird-fly;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-        }
-        @keyframes bird-fly {
-          from { transform: translateX(-10%); }
-          to { transform: translateX(110%); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .birds-layer .bird {
-            animation: none;
+        <style>{`
+          @keyframes fly {
+            from { transform: translateX(-20px) }
+            to   { transform: translateX(120%) }
           }
-        }
-      `}</style>
+        `}</style>
+      </defs>
+      {items}
     </svg>
-  )
+  );
 }
-
-export default Birds
