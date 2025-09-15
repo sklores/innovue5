@@ -1,6 +1,6 @@
 import TopBar from './scenic/TopBar.tsx'
-import KpiTiles from './features/KpiTiles.tsx'
-import LiveFeedPanel from './features/LiveFeedPanel.tsx'
+import KpiTiles from './features/kpi/KpiTiles.tsx'
+import LiveFeedPanel from './features/marquee/LiveFeedPanel.tsx'
 
 function App() {
   return (
