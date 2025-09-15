@@ -7,7 +7,16 @@ export default function LiveFeedPanel() {
   const lastUpdated = useLastUpdated()
   const feed = useLiveFeed()
   const titles: string[] = useMemo(() => feed?.titles ?? [], [feed])
-  const rows: string[][] = useMemo(() => feed?.rows ?? [], [feed])
+  const rawRows: string[] = useMemo(() => feed?.rows ?? [], [feed])
+  const rows: string[][] = useMemo(
+    () =>
+      rawRows.map((r: string) =>
+        r.split(/-----|—|–/g)
+          .map((s: string) => s.trim())
+          .filter(Boolean),
+      ),
+    [rawRows],
+  )
 
   const [active, setActive] = useState(() => {
     if (typeof window === 'undefined') return 0
@@ -32,7 +41,10 @@ export default function LiveFeedPanel() {
   return (
     <section className="live-feed-panel" aria-labelledby="live-feed-header">
       <header className="live-feed-header" id="live-feed-header">
-        <span className="live-feed-updated">Last Updated {formatted}</span>
+        <div className="live-feed-meta">
+          <h2 className="live-feed-title">GCDC Live Feed</h2>
+          <span className="live-feed-updated">Last Updated {formatted}</span>
+        </div>
         <div className="live-feed-tabs" role="tablist">
           {titles.map((t: string, idx: number) => (
             <button
