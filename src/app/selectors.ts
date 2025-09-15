@@ -6,6 +6,10 @@ export type Kpis = {
   laborPct: number
 }
 
+interface WindowWithAppState extends Window {
+  __APP_STATE__?: { kpis?: Partial<Kpis> }
+}
+
 export const TARGETS = {
   sales: 100,
 }
@@ -19,7 +23,7 @@ export function useKpis(): Kpis {
   void lastRefresh // trigger re-render on refresh
 
   const appState =
-    (typeof window !== 'undefined' && (window as any).__APP_STATE__) || {}
+    (typeof window !== 'undefined' && (window as WindowWithAppState).__APP_STATE__) || {}
   const kpis = appState.kpis ?? {}
 
   return {
@@ -68,24 +72,26 @@ export function tileColor(): string {
   return 'var(--accent-10, #e0e0e0)'
 }
 
-const MAX_BIRDS = 10
-const MIN_BIRD_SPEED = 0.5
-const MAX_BIRD_SPEED = 2
+/** --- M3: birds & waves selectors (presentational; safe defaults) --- */
+type AppGlobals = {
+  APP?: {
+    kpis?: { laborPct?: number; sales?: number };
+    TARGETS?: { sales?: number };
+  };
+};
 
-export function useBirdProps() {
-  const { laborPct } = useKpis()
-  const factor = clamp(laborPct / 0.5, 0, 1)
-  const count = Math.round(factor * MAX_BIRDS)
-  const speed = MIN_BIRD_SPEED + factor * (MAX_BIRD_SPEED - MIN_BIRD_SPEED)
-  return { count, speed }
+export function useBirdProps(): { count: number; speed: number } {
+  const app = (globalThis as AppGlobals).APP;
+  const laborPct = app?.kpis?.laborPct ?? 30; // 0..100
+  const t = Math.max(0, Math.min(1, (50 - laborPct) / 50)); // lower labor => higher t
+  const count = Math.round(2 + t * 10);  // 2..12
+  const speed = t;                       // 0..1
+  return { count, speed };
 }
-
-export function useWaveProps() {
-  const { sales } = useKpis()
-  const amplitude = clamp(sales / TARGETS.sales, 0, 1)
-  return { amplitude, roughness: 0 }
-}
-
-function clamp(value: number, min = 0, max = 1) {
-  return Math.min(Math.max(value, min), max)
+export function useWaveProps(): { amplitude: number; roughness: number } {
+  const app = (globalThis as AppGlobals).APP;
+  const sales = app?.kpis?.sales ?? 0;
+  const target = app?.TARGETS?.sales ?? 1;
+  const ratio = target > 0 ? Math.max(0, Math.min(1, sales / target)) : 0;
+  return { amplitude: ratio, roughness: 0 };
 }
