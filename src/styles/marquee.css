@@ -17,6 +17,17 @@
   margin-bottom: 0.75rem;
 }
 
+.live-feed-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.live-feed-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
 .live-feed-updated {
   font-size: 0.875rem;
   color: var(--ink-60, #555);

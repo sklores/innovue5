@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useRefresh } from './state'
 
 export type Kpis = {
@@ -36,8 +37,28 @@ export function useLoadingError(): unknown {
   return undefined
 }
 
-export function useLiveFeed(): { titles: string[]; rows: string[][] } | undefined {
-  return undefined
+export function useLiveFeed(): { titles: string[]; rows: string[] } | undefined {
+  const { lastRefresh } = useRefresh()
+  const [feed, setFeed] = useState<{ titles: string[]; rows: string[] }>()
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    type FeedState = { titles?: unknown; rows?: unknown }
+    const source: FeedState | undefined = (window as { liveFeed?: FeedState }).liveFeed
+
+    if (source && typeof source === 'object') {
+      const titles = Array.isArray(source.titles)
+        ? (source.titles as string[])
+        : []
+      const rows = Array.isArray(source.rows) ? (source.rows as string[]) : []
+      setFeed({ titles, rows })
+    } else {
+      setFeed(undefined)
+    }
+  }, [lastRefresh])
+
+  return feed
 }
 
 export const useFeed = useLiveFeed
