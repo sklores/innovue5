@@ -1,13 +1,16 @@
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   padding: 1rem;
 }
 
 .kpi-tile {
-  background: #1a1a1a;
   padding: 1rem;
   border-radius: 0.5rem;
   text-align: center;
+}
+
+.kpi-tile.full {
+  grid-column: span 2;
 }
