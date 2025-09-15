@@ -10,9 +10,20 @@ export const TARGETS = {
 }
 
 export function useKpis(): Kpis {
+  // Access the global application state which is expected to be
+  // attached to the `window` object. This mirrors the shape of the
+  // server supplied data in production.  If the data isn't present we
+  // fall back to zeros to keep the UI stable.
+  const { lastRefresh } = useRefresh()
+  void lastRefresh // trigger re-render on refresh
+
+  const appState =
+    (typeof window !== 'undefined' && (window as any).__APP_STATE__) || {}
+  const kpis = appState.kpis ?? {}
+
   return {
-    sales: 0,
-    laborPct: 0,
+    sales: typeof kpis.sales === 'number' ? kpis.sales : 0,
+    laborPct: typeof kpis.laborPct === 'number' ? kpis.laborPct : 0,
   }
 }
 
@@ -32,7 +43,8 @@ export function useLiveFeed(): { titles: string[]; rows: string[][] } | undefine
 export const useFeed = useLiveFeed
 
 export function tileColor(): string {
-  return ''
+  // Pastel accent color used for KPI tiles and chips
+  return 'var(--accent-10, #e0e0e0)'
 }
 
 const MAX_BIRDS = 10
