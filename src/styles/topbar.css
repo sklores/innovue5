@@ -1,15 +1,36 @@
 .top-bar {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
 }
 
+.top-bar .scenic {
+  position: relative;
+}
+
+.top-bar .waves {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
 .top-bar .logo {
+  position: relative;
+  z-index: 1;
   height: 40px;
 }
 
+.top-bar .birds {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
 .control-pill {
+  position: relative;
+  z-index: 3;
   border-radius: 9999px;
   padding: 0.25rem 0.75rem;
 }
