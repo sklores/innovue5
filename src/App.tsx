@@ -1,8 +1,13 @@
-import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { useAppDispatch, useAppSelector } from './app/state'
+import { selectCount, selectFeed, selectKpis } from './app/selectors'
+
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useAppDispatch()
+  const count = useAppSelector(selectCount)
+  const kpis = useAppSelector(selectKpis)
+  const feed = useAppSelector(selectFeed)
 
   return (
     <>
@@ -16,13 +21,25 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={() => dispatch({ type: 'increment' })}>
           count is {count}
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
       </div>
+      <ul>
+        {Object.entries(kpis).map(([key, value]) => (
+          <li key={key}>
+            {key}: {value}
+          </li>
+        ))}
+      </ul>
+      <ul>
+        {feed.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>

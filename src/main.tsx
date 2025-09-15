@@ -6,9 +6,12 @@ import './styles/kpi.css'
 import './styles/bottom.css'
 import './styles/marquee.css'
 import App from './App.tsx'
+import { AppStateProvider } from './app/state'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <AppStateProvider>
+      <App />
+    </AppStateProvider>
   </StrictMode>,
 )
